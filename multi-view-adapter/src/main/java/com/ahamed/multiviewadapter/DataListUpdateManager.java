@@ -27,6 +27,8 @@ class DataListUpdateManager<M> extends BaseDataManager<M> {
 
   final PayloadProvider<M> payloadProvider;
 
+  public M getList;
+
   DataListUpdateManager(@NonNull RecyclerAdapter adapter) {
     this(adapter, new PayloadProvider<M>() {
       @Override public boolean areContentsTheSame(M oldItem, M newItem) {

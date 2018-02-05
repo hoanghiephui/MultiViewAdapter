@@ -21,7 +21,9 @@ import android.support.annotation.RestrictTo;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.DataItemManager;
 import com.ahamed.multiviewadapter.ItemBinder;
@@ -31,6 +33,7 @@ import com.ahamed.multiviewadapter.ItemViewHolder;
  * Class to add infinite loading feature into the adapter
  */
 public abstract class InfiniteLoadingHelper {
+  private static final String TAG = InfiniteLoadingHelper.class.getSimpleName();
 
   private final InfiniteLoadingBinder itemBinder;
   private final InfiniteScrollListener infiniteScrollListener;
@@ -123,6 +126,9 @@ public abstract class InfiniteLoadingHelper {
   private void completeLoading() {
     canLoadMore = false;
     dataItemManager.removeItem();
+    if (itemBinder.holder != null) {
+        itemBinder.holder.itemView.setVisibility(View.GONE);
+    }
   }
 
   /**
@@ -131,6 +137,7 @@ public abstract class InfiniteLoadingHelper {
   private static class InfiniteLoadingBinder extends ItemBinder<String, ItemViewHolder<String>> {
 
     @LayoutRes private final int layoutId;
+      ItemViewHolder holder;
 
     InfiniteLoadingBinder(@LayoutRes int layoutId) {
       this.layoutId = layoutId;
@@ -143,6 +150,13 @@ public abstract class InfiniteLoadingHelper {
 
     @Override public final void bind(ItemViewHolder holder, String item) {
       // No-op
+        this.holder = holder;
+      Log.d(TAG, "bind: load" + item);
+      if (holder.getAdapterPosition() == 0) {
+          holder.itemView.setVisibility(View.GONE);
+      } else {
+          holder.itemView.setVisibility(View.VISIBLE);
+      }
     }
 
     @Override public final boolean canBindData(Object item) {

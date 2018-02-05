@@ -56,7 +56,7 @@ public class ComplexListAdapter extends RecyclerAdapter {
     gridItemsManager = new DataListManager<>(this);
     multiItemsManager = new DataListManager<>(this);
 
-    addDataManager(new DataItemManager<>(this, new Header("Articles")));
+    addDataManager(new DataItemManager<>(this));
     addDataManager(singleModelManager);
     addDataManager(new DataItemManager<>(this, DummyDataProvider.getAdvertisementOne()));
     addDataManager(new DataItemManager<>(this, new Header("Grid", true)));

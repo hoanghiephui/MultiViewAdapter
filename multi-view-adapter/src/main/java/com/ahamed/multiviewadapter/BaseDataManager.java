@@ -301,7 +301,7 @@ public abstract class BaseDataManager<M> implements ListUpdateCallback {
     // Do nothing. Should be overridden by GroupDataManager
   }
 
-  List<M> getDataList() {
+  public List<M> getDataList() {
     return dataList;
   }
 
