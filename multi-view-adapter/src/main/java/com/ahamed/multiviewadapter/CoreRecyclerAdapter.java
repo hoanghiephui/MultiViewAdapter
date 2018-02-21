@@ -32,7 +32,7 @@ import static com.ahamed.multiviewadapter.RecyclerAdapter.EXPANDABLE_MODE_MULTIP
 import static com.ahamed.multiviewadapter.RecyclerAdapter.EXPANDABLE_MODE_NONE;
 import static com.ahamed.multiviewadapter.RecyclerAdapter.EXPANDABLE_MODE_SINGLE;
 
-class CoreRecyclerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
+class CoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   final List<BaseDataManager> dataManagers = new ArrayList<>();
   final ItemDecorationManager itemDecorationManager;
@@ -95,35 +95,36 @@ class CoreRecyclerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
-  public final void onBindViewHolder(ItemViewHolder holder, int adapterPosition) {
+  public final void onBindViewHolder(RecyclerView.ViewHolder holder, int adapterPosition) {
     onBindViewHolder(holder, adapterPosition, null);
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
-  public final void onBindViewHolder(ItemViewHolder holder, int adapterPosition,
+  public final void onBindViewHolder(RecyclerView.ViewHolder holder, int adapterPosition,
       List<Object> payloads) {
     ItemBinder baseBinder = binders.get(holder.getItemViewType());
-
-    int totalCount = 0;
-    for (BaseDataManager dataManager : dataManagers) {
-      totalCount += dataManager.getCount();
-      if (adapterPosition < totalCount) {
-        int itemPosition = getItemPositionInManager(adapterPosition);
-        if (dataManager instanceof DataGroupManager) {
-          dataManager = ((DataGroupManager) dataManager).getDataManagerForPosition(itemPosition);
+    if (holder instanceof ItemViewHolder) {
+      int totalCount = 0;
+      for (BaseDataManager dataManager : dataManagers) {
+        totalCount += dataManager.getCount();
+        if (adapterPosition < totalCount) {
+          int itemPosition = getItemPositionInManager(adapterPosition);
+          if (dataManager instanceof DataGroupManager) {
+            dataManager = ((DataGroupManager) dataManager).getDataManagerForPosition(itemPosition);
+          }
+          //noinspection unchecked
+          ((ItemViewHolder)holder).setItem(dataManager.getItem(itemPosition));
+          break;
         }
-        //noinspection unchecked
-        holder.setItem(dataManager.getItem(itemPosition));
-        break;
       }
-    }
 
-    if (null == payloads || payloads.size() == 0) {
-      //noinspection unchecked
-      baseBinder.bindViewHolder(holder, holder.getItem());
-    } else {
-      //noinspection unchecked
-      baseBinder.bindViewHolder(holder, holder.getItem(), payloads);
+      if (null == payloads || payloads.size() == 0) {
+        //noinspection unchecked
+        baseBinder.bindViewHolder(((ItemViewHolder)holder), ((ItemViewHolder)holder).getItem());
+      } else {
+        //noinspection unchecked
+        baseBinder.bindViewHolder(((ItemViewHolder)holder), ((ItemViewHolder)holder).getItem(), payloads);
+      }
     }
   }
 
